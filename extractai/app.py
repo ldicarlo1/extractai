@@ -82,15 +82,27 @@ def _inject_background_styles() -> None:
         <style>
         :root {
             color-scheme: light !important;
+            --ea-bg: #f7f9fc;
+            --ea-card-bg: rgba(255, 255, 255, 0.94);
+            --ea-text: #1f2937;
+            --ea-muted: #6b7280;
+            --ea-border: #c8d3e3;
+            --ea-border-hover: #9bb0cf;
+            --ea-primary: #2563eb;
+            --ea-primary-hover: #1d4ed8;
+            --ea-danger: #dc2626;
+            --ea-danger-hover: #b91c1c;
         }
 
-        html, body {
+        html, body, #root {
             min-height: 100%;
-            background: #f7f9fc;
+            background: var(--ea-bg) !important;
+            color: var(--ea-text) !important;
         }
 
         .stApp {
             background: transparent;
+            color: var(--ea-text) !important;
         }
 
         [data-testid="stAppViewContainer"] {
@@ -122,7 +134,7 @@ def _inject_background_styles() -> None:
 
         [data-testid="stAppViewContainer"] .block-container {
             position: relative;
-            background: rgba(255, 255, 255, 0.94);
+            background: var(--ea-card-bg);
             border: 1px solid rgba(211, 222, 236, 0.9);
             border-radius: 18px;
             box-shadow: 0 18px 44px rgba(42, 65, 95, 0.12);
@@ -140,38 +152,50 @@ def _inject_background_styles() -> None:
             background: transparent !important;
         }
 
-        /* Light-theme fallback for cloud deployments */
+        /* Force readable text colors regardless of host theme */
+        [data-testid="stAppViewContainer"] .block-container,
         [data-testid="stAppViewContainer"] .block-container h1,
         [data-testid="stAppViewContainer"] .block-container h2,
         [data-testid="stAppViewContainer"] .block-container h3,
         [data-testid="stAppViewContainer"] .block-container h4,
         [data-testid="stAppViewContainer"] .block-container p,
         [data-testid="stAppViewContainer"] .block-container label,
+        [data-testid="stAppViewContainer"] .block-container span,
+        [data-testid="stAppViewContainer"] .block-container li,
         [data-testid="stAppViewContainer"] .block-container div[data-testid="stMarkdownContainer"],
         [data-testid="stAppViewContainer"] .block-container div[data-testid="stCaptionContainer"] {
-            color: #1f2937 !important;
+            color: var(--ea-text) !important;
+            -webkit-text-fill-color: var(--ea-text) !important;
+            opacity: 1 !important;
+        }
+
+        [data-testid="stAppViewContainer"] .block-container div[data-testid="stCaptionContainer"],
+        [data-testid="stAppViewContainer"] .block-container small {
+            color: var(--ea-muted) !important;
+            -webkit-text-fill-color: var(--ea-muted) !important;
         }
 
         div[data-baseweb="input"] > div,
         div[data-baseweb="textarea"] > div,
         div[data-baseweb="select"] > div {
             background: #ffffff !important;
-            border: 1px solid #c8d3e3 !important;
+            border: 1px solid var(--ea-border) !important;
             border-radius: 0.55rem !important;
             box-shadow: none !important;
+            opacity: 1 !important;
         }
 
         div[data-baseweb="input"] > div:hover,
         div[data-baseweb="textarea"] > div:hover,
         div[data-baseweb="select"] > div:hover {
-            border-color: #9bb0cf !important;
+            border-color: var(--ea-border-hover) !important;
         }
 
         div[data-baseweb="input"] > div:focus-within,
         div[data-baseweb="textarea"] > div:focus-within,
         div[data-baseweb="select"] > div:focus-within {
-            border-color: #1d4ed8 !important;
-            box-shadow: 0 0 0 1px #1d4ed8 !important;
+            border-color: var(--ea-primary) !important;
+            box-shadow: 0 0 0 1px var(--ea-primary) !important;
         }
 
         div[data-baseweb="input"] input,
@@ -190,6 +214,7 @@ def _inject_background_styles() -> None:
         div[data-baseweb="select"] *,
         div[data-baseweb="select"] div {
             color: #111827 !important;
+            -webkit-text-fill-color: #111827 !important;
             opacity: 1 !important;
         }
 
@@ -197,7 +222,47 @@ def _inject_background_styles() -> None:
         div[data-baseweb="input"] textarea::placeholder,
         div[data-baseweb="textarea"] textarea::placeholder,
         div[data-baseweb="select"] input::placeholder {
+            color: var(--ea-muted) !important;
+            -webkit-text-fill-color: var(--ea-muted) !important;
             font-size: 0.84rem !important;
+        }
+
+        /* Dropdown menu/popover colors */
+        div[role="listbox"],
+        ul[role="listbox"] {
+            background: #ffffff !important;
+            border: 1px solid var(--ea-border) !important;
+            color: #111827 !important;
+        }
+
+        div[role="option"],
+        li[role="option"] {
+            color: #111827 !important;
+            -webkit-text-fill-color: #111827 !important;
+            background: #ffffff !important;
+        }
+
+        div[role="option"][aria-selected="true"],
+        li[role="option"][aria-selected="true"] {
+            background: #eff6ff !important;
+        }
+
+        /* Number input stepper buttons */
+        [data-testid="stNumberInput"] button {
+            background: var(--ea-primary) !important;
+            border: 1px solid var(--ea-primary) !important;
+        }
+
+        [data-testid="stNumberInput"] button:hover {
+            background: var(--ea-primary-hover) !important;
+            border-color: var(--ea-primary-hover) !important;
+        }
+
+        [data-testid="stNumberInput"] button *,
+        [data-testid="stNumberInput"] button span {
+            color: #ffffff !important;
+            -webkit-text-fill-color: #ffffff !important;
+            opacity: 1 !important;
         }
 
         button[id*="input_dir_browse_button"],
@@ -226,16 +291,16 @@ def _inject_background_styles() -> None:
         [data-testid="stButton"] button,
         [data-testid="stFormSubmitButton"] button,
         [data-testid="stDownloadButton"] button {
-            background: #1d4ed8 !important;
-            border: 1px solid #1d4ed8 !important;
+            background: var(--ea-primary) !important;
+            border: 1px solid var(--ea-primary) !important;
             color: #ffffff !important;
         }
 
         [data-testid="stButton"] button:hover,
         [data-testid="stFormSubmitButton"] button:hover,
         [data-testid="stDownloadButton"] button:hover {
-            background: #1e40af !important;
-            border-color: #1e40af !important;
+            background: var(--ea-primary-hover) !important;
+            border-color: var(--ea-primary-hover) !important;
         }
 
         [data-testid="stButton"] button p,
@@ -257,6 +322,7 @@ def _inject_background_styles() -> None:
             background: #cfd8e7 !important;
             border-color: #cfd8e7 !important;
             color: #6b7280 !important;
+            opacity: 1 !important;
         }
 
         [data-testid="stButton"] button:disabled p,
@@ -275,13 +341,13 @@ def _inject_background_styles() -> None:
         }
 
         button[id*="schema_delete_"] {
-            background: #dc2626 !important;
-            border-color: #dc2626 !important;
+            background: var(--ea-danger) !important;
+            border-color: var(--ea-danger) !important;
         }
 
         button[id*="schema_delete_"]:hover {
-            background: #b91c1c !important;
-            border-color: #b91c1c !important;
+            background: var(--ea-danger-hover) !important;
+            border-color: var(--ea-danger-hover) !important;
         }
         </style>
         """,
