@@ -244,6 +244,13 @@ def _inject_background_styles() -> None:
             color: #ffffff !important;
         }
 
+        [data-testid="stButton"] button *:not(svg),
+        [data-testid="stFormSubmitButton"] button *:not(svg),
+        [data-testid="stDownloadButton"] button *:not(svg) {
+            color: #ffffff !important;
+            -webkit-text-fill-color: #ffffff !important;
+        }
+
         [data-testid="stButton"] button:disabled,
         [data-testid="stFormSubmitButton"] button:disabled,
         [data-testid="stDownloadButton"] button:disabled {
@@ -255,7 +262,16 @@ def _inject_background_styles() -> None:
         [data-testid="stButton"] button:disabled p,
         [data-testid="stFormSubmitButton"] button:disabled p,
         [data-testid="stDownloadButton"] button:disabled p {
-            color: #6b7280 !important;
+            color: #ffffff !important;
+            opacity: 0.72 !important;
+        }
+
+        [data-testid="stButton"] button:disabled *:not(svg),
+        [data-testid="stFormSubmitButton"] button:disabled *:not(svg),
+        [data-testid="stDownloadButton"] button:disabled *:not(svg) {
+            color: #ffffff !important;
+            -webkit-text-fill-color: #ffffff !important;
+            opacity: 0.72 !important;
         }
 
         button[id*="schema_delete_"] {
