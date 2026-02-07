@@ -50,6 +50,8 @@ python -m pip install -e '.[demo]'
 python -m streamlit run extractai/extractai-app.py
 ```
 
+![ExtractAI App](images/ExtractAI%20App.png)
+
 ## Notebooks
 
 - Main flow: [`extractai_basic_demo.ipynb`](extractai_basic_demo.ipynb)
