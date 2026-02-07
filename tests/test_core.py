@@ -14,6 +14,7 @@ from unittest.mock import patch
 from pydantic import BaseModel, ValidationError
 
 import extractai
+import extractai.cli as cli
 import extractai.core as core
 
 
@@ -115,6 +116,37 @@ class PackageImportTests(unittest.TestCase):
     def test_extractai_exports_main_api(self) -> None:
         self.assertTrue(hasattr(extractai, "run_directory_extraction"))
         self.assertTrue(hasattr(extractai, "submit_directory_batch"))
+        self.assertTrue(hasattr(extractai, "run_app"))
+
+
+class CLITests(unittest.TestCase):
+    def test_run_app_returns_error_when_streamlit_missing(self) -> None:
+        with patch("extractai.cli.importlib.util.find_spec", return_value=None), patch(
+            "extractai.cli.subprocess.call"
+        ) as mock_call:
+            code = cli.run_app()
+
+        self.assertEqual(code, 1)
+        mock_call.assert_not_called()
+
+    def test_run_app_invokes_streamlit_with_module_path(self) -> None:
+        with patch("extractai.cli.importlib.util.find_spec", return_value=object()), patch(
+            "extractai.cli.subprocess.call", return_value=0
+        ) as mock_call:
+            code = cli.run_app(extra_args=["--server.port", "8502"])
+
+        self.assertEqual(code, 0)
+        command = mock_call.call_args[0][0]
+        self.assertEqual(command[1:4], ["-m", "streamlit", "run"])
+        self.assertTrue(command[4].endswith("/extractai/app.py"))
+        self.assertEqual(command[-2:], ["--server.port", "8502"])
+
+    def test_main_exits_with_run_app_status_code(self) -> None:
+        with patch("extractai.cli.run_app", return_value=7):
+            with self.assertRaises(SystemExit) as exc:
+                cli.main()
+
+        self.assertEqual(exc.exception.code, 7)
 
 
 class ConfigAndTokenTests(unittest.TestCase):

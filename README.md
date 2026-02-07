@@ -46,8 +46,8 @@ print(csv_path)
 ## Frontend App
 
 ```bash
-python -m pip install -e '.[demo]'
-python -m streamlit run extractai/extractai-app.py
+python -m pip install "extractai[demo]"
+extractai-app
 ```
 
 ![ExtractAI App](images/ExtractAI%20App.png)

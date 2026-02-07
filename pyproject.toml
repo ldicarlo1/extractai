@@ -32,6 +32,9 @@ Homepage = "https://github.com/lucadicarlo/extractai"
 Repository = "https://github.com/lucadicarlo/extractai"
 Issues = "https://github.com/lucadicarlo/extractai/issues"
 
+[project.scripts]
+extractai-app = "extractai.cli:main"
+
 [project.optional-dependencies]
 dev = [
   "build>=1.2.2",
