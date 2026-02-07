@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=65.5.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "extractai"
+version = "0.1.0"
+description = "Reusable helpers for PDF-to-structured extraction with OpenAI"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [
+  { name = "Luca Di Carlo" },
+]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.11",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+]
+dependencies = [
+  "openai>=1.93.0",
+  "pydantic>=2.0",
+  "pdfplumber>=0.11.0",
+  "python-dotenv>=1.0.0",
+  "tiktoken>=0.7.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/lucadicarlo/extractai"
+Repository = "https://github.com/lucadicarlo/extractai"
+Issues = "https://github.com/lucadicarlo/extractai/issues"
+
+[project.optional-dependencies]
+dev = [
+  "build>=1.2.2",
+  "twine>=5.1.1",
+]
+demo = [
+  "streamlit>=1.37.0",
+]
+
+[tool.setuptools]
+packages = ["extractai"]
