@@ -152,7 +152,22 @@ def _inject_background_styles() -> None:
         div[data-baseweb="textarea"] > div,
         div[data-baseweb="select"] > div {
             background: #ffffff !important;
-            border-color: #d5deec !important;
+            border: 1px solid #c8d3e3 !important;
+            border-radius: 0.55rem !important;
+            box-shadow: none !important;
+        }
+
+        div[data-baseweb="input"] > div:hover,
+        div[data-baseweb="textarea"] > div:hover,
+        div[data-baseweb="select"] > div:hover {
+            border-color: #9bb0cf !important;
+        }
+
+        div[data-baseweb="input"] > div:focus-within,
+        div[data-baseweb="textarea"] > div:focus-within,
+        div[data-baseweb="select"] > div:focus-within {
+            border-color: #1d4ed8 !important;
+            box-shadow: 0 0 0 1px #1d4ed8 !important;
         }
 
         div[data-baseweb="input"] input,
@@ -194,6 +209,17 @@ def _inject_background_styles() -> None:
             margin: 0 !important;
             white-space: nowrap !important;
             word-break: normal !important;
+        }
+
+        /* Keep Execute button text readable */
+        [data-testid="stButton"] button[kind="primary"],
+        [data-testid="stFormSubmitButton"] button[kind="primary"] {
+            color: #ffffff !important;
+        }
+
+        [data-testid="stButton"] button[kind="primary"] p,
+        [data-testid="stFormSubmitButton"] button[kind="primary"] p {
+            color: #ffffff !important;
         }
         </style>
         """,
@@ -280,6 +306,13 @@ def _resolve_initial_picker_dir(*, raw_value: str, default_dir: Path) -> Path:
     return candidate if candidate.exists() else default_dir
 
 
+def _native_picker_available() -> bool:
+    system = platform.system().lower()
+    if system in {"darwin", "windows"}:
+        return True
+    return shutil.which("zenity") is not None
+
+
 def _directory_picker(*, label: str, key_prefix: str, default_dir: Path) -> str:
     path_key = f"{key_prefix}_path"
 
@@ -288,16 +321,21 @@ def _directory_picker(*, label: str, key_prefix: str, default_dir: Path) -> str:
 
     st.markdown(label)
     field_col, button_col = st.columns(DIRECTORY_PICKER_LAYOUT, gap="small")
+    can_use_native_picker = _native_picker_available()
     with field_col:
         typed_value = st.text_input(label, value=str(st.session_state[path_key]), label_visibility="collapsed")
         if typed_value != st.session_state[path_key]:
             st.session_state[path_key] = typed_value
+        if not can_use_native_picker:
+            st.caption("Browse is unavailable in this environment. Enter a directory path manually.")
     with button_col:
-        if st.button("Browse", key=f"{key_prefix}_browse_button", use_container_width=True):
-            # Streamlit Cloud and some Linux desktops do not have a native folder picker.
-            if platform.system().lower() not in {"darwin", "windows"} and not shutil.which("zenity"):
-                st.info("Native folder picker is unavailable here. Enter the directory path manually.")
-                return str(st.session_state[path_key])
+        if st.button(
+            "Browse",
+            key=f"{key_prefix}_browse_button",
+            use_container_width=True,
+            disabled=not can_use_native_picker,
+            help=None if can_use_native_picker else "Unavailable on this hosted environment.",
+        ):
             initial_dir = _resolve_initial_picker_dir(
                 raw_value=str(st.session_state[path_key]),
                 default_dir=default_dir,
