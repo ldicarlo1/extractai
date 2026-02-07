@@ -80,6 +80,10 @@ def _inject_background_styles() -> None:
     st.markdown(
         """
         <style>
+        :root {
+            color-scheme: light !important;
+        }
+
         html, body {
             min-height: 100%;
             background: #f7f9fc;
@@ -177,8 +181,16 @@ def _inject_background_styles() -> None:
         div[data-baseweb="select"] span,
         div[data-baseweb="select"] div[role="combobox"] {
             color: #111827 !important;
+            -webkit-text-fill-color: #111827 !important;
             background: transparent !important;
             font-size: 0.84rem !important;
+            opacity: 1 !important;
+        }
+
+        div[data-baseweb="select"] *,
+        div[data-baseweb="select"] div {
+            color: #111827 !important;
+            opacity: 1 !important;
         }
 
         div[data-baseweb="input"] input::placeholder,
@@ -211,15 +223,49 @@ def _inject_background_styles() -> None:
             word-break: normal !important;
         }
 
-        /* Keep Execute button text readable */
-        [data-testid="stButton"] button[kind="primary"],
-        [data-testid="stFormSubmitButton"] button[kind="primary"] {
+        [data-testid="stButton"] button,
+        [data-testid="stFormSubmitButton"] button,
+        [data-testid="stDownloadButton"] button {
+            background: #1d4ed8 !important;
+            border: 1px solid #1d4ed8 !important;
             color: #ffffff !important;
         }
 
-        [data-testid="stButton"] button[kind="primary"] p,
-        [data-testid="stFormSubmitButton"] button[kind="primary"] p {
+        [data-testid="stButton"] button:hover,
+        [data-testid="stFormSubmitButton"] button:hover,
+        [data-testid="stDownloadButton"] button:hover {
+            background: #1e40af !important;
+            border-color: #1e40af !important;
+        }
+
+        [data-testid="stButton"] button p,
+        [data-testid="stFormSubmitButton"] button p,
+        [data-testid="stDownloadButton"] button p {
             color: #ffffff !important;
+        }
+
+        [data-testid="stButton"] button:disabled,
+        [data-testid="stFormSubmitButton"] button:disabled,
+        [data-testid="stDownloadButton"] button:disabled {
+            background: #cfd8e7 !important;
+            border-color: #cfd8e7 !important;
+            color: #6b7280 !important;
+        }
+
+        [data-testid="stButton"] button:disabled p,
+        [data-testid="stFormSubmitButton"] button:disabled p,
+        [data-testid="stDownloadButton"] button:disabled p {
+            color: #6b7280 !important;
+        }
+
+        button[id*="schema_delete_"] {
+            background: #dc2626 !important;
+            border-color: #dc2626 !important;
+        }
+
+        button[id*="schema_delete_"]:hover {
+            background: #b91c1c !important;
+            border-color: #b91c1c !important;
         }
         </style>
         """,
