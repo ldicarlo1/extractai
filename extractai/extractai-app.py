@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import os
 import platform
+import shutil
 import subprocess
 import sys
 from collections import Counter
@@ -122,7 +123,7 @@ def _inject_background_styles() -> None:
             border-radius: 18px;
             box-shadow: 0 18px 44px rgba(42, 65, 95, 0.12);
             padding: 1.25rem 1.5rem 1.8rem 1.5rem;
-            max-width: 1200px;
+            max-width: 1360px;
             width: calc(100% - 3.0rem);
             margin-left: auto;
             margin-right: auto;
@@ -135,12 +136,33 @@ def _inject_background_styles() -> None:
             background: transparent !important;
         }
 
+        /* Light-theme fallback for cloud deployments */
+        [data-testid="stAppViewContainer"] .block-container h1,
+        [data-testid="stAppViewContainer"] .block-container h2,
+        [data-testid="stAppViewContainer"] .block-container h3,
+        [data-testid="stAppViewContainer"] .block-container h4,
+        [data-testid="stAppViewContainer"] .block-container p,
+        [data-testid="stAppViewContainer"] .block-container label,
+        [data-testid="stAppViewContainer"] .block-container div[data-testid="stMarkdownContainer"],
+        [data-testid="stAppViewContainer"] .block-container div[data-testid="stCaptionContainer"] {
+            color: #1f2937 !important;
+        }
+
+        div[data-baseweb="input"] > div,
+        div[data-baseweb="textarea"] > div,
+        div[data-baseweb="select"] > div {
+            background: #ffffff !important;
+            border-color: #d5deec !important;
+        }
+
         div[data-baseweb="input"] input,
         div[data-baseweb="input"] textarea,
         div[data-baseweb="textarea"] textarea,
         div[data-baseweb="select"] input,
         div[data-baseweb="select"] span,
         div[data-baseweb="select"] div[role="combobox"] {
+            color: #111827 !important;
+            background: transparent !important;
             font-size: 0.84rem !important;
         }
 
@@ -235,9 +257,13 @@ def _pick_directory_native(*, initial_dir: Path, title: str) -> str | None:
         selected = completed.stdout.strip()
         return selected or None
 
-    # Linux / other: try zenity if available.
+    # Linux / other: use zenity when available.
+    zenity_path = shutil.which("zenity")
+    if not zenity_path:
+        return None
+
     completed = subprocess.run(
-        ["zenity", "--file-selection", "--directory", "--filename", f"{initial_dir}/"],
+        [zenity_path, "--file-selection", "--directory", "--filename", f"{initial_dir}/"],
         check=False,
         capture_output=True,
         text=True,
@@ -246,10 +272,7 @@ def _pick_directory_native(*, initial_dir: Path, title: str) -> str | None:
         selected = completed.stdout.strip()
         return selected or None
 
-    raise RuntimeError(
-        "Native folder picker is unavailable on this platform. "
-        "Enter directory paths manually."
-    )
+    return None
 
 
 def _resolve_initial_picker_dir(*, raw_value: str, default_dir: Path) -> Path:
@@ -271,6 +294,10 @@ def _directory_picker(*, label: str, key_prefix: str, default_dir: Path) -> str:
             st.session_state[path_key] = typed_value
     with button_col:
         if st.button("Browse", key=f"{key_prefix}_browse_button", use_container_width=True):
+            # Streamlit Cloud and some Linux desktops do not have a native folder picker.
+            if platform.system().lower() not in {"darwin", "windows"} and not shutil.which("zenity"):
+                st.info("Native folder picker is unavailable here. Enter the directory path manually.")
+                return str(st.session_state[path_key])
             initial_dir = _resolve_initial_picker_dir(
                 raw_value=str(st.session_state[path_key]),
                 default_dir=default_dir,
