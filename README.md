@@ -2,17 +2,27 @@
 
 Extract structured data from local PDF files with OpenAI models.
 
-## Install
+## Install (GitHub)
+
+Backend only:
 
 ```bash
-pip install extractai
+python -m pip install "extractai @ git+https://github.com/ldicarlo1/extractai.git@main"
 ```
 
-From source:
+With frontend:
 
 ```bash
-python -m pip install -e '.[demo]'
+python -m pip install "extractai[demo] @ git+https://github.com/ldicarlo1/extractai.git@main"
 ```
+
+## Run Frontend App
+
+```bash
+extractai-app
+```
+
+![ExtractAI App](images/ExtractAI%20App.png)
 
 ## Configure
 
@@ -42,15 +52,6 @@ results = run_directory_extraction(config=config, schema=ExtractedDocument, prom
 csv_path = save_results_to_csv(results, output_dir="outputs")
 print(csv_path)
 ```
-
-## Frontend App
-
-```bash
-python -m pip install "extractai[demo]"
-extractai-app
-```
-
-![ExtractAI App](images/ExtractAI%20App.png)
 
 ## Notebooks
 
